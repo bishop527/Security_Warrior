@@ -1,0 +1,300 @@
+
+<!-- saved from url=(0051)http://www.woodmann.com/fravia/defiler_TrojanRE.htm -->
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta name="Generator" content="Microsoft FrontPage 4.0">
+<meta name="Originator" content="Microsoft Word 9">
+<link rel="File-List" href="">
+<title>Trojan Reversing part I - by defiler</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:LastAuthor>Tsehp</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>0</o:TotalTime>
+  <o:Created>2000-09-17T15:37:00Z</o:Created>
+  <o:LastSaved>2000-09-17T15:37:00Z</o:LastSaved>
+  <o:Pages>3</o:Pages>
+  <o:Words>709</o:Words>
+  <o:Characters>4045</o:Characters>
+  <o:Company>Vegavista</o:Company>
+  <o:Lines>33</o:Lines>
+  <o:Paragraphs>8</o:Paragraphs>
+  <o:CharactersWithSpaces>4967</o:CharactersWithSpaces>
+  <o:Version>9.2812</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+@font-face
+	{font-family:"MS Mincho";
+	panose-1:0 0 0 0 0 0 0 0 0 0;
+	mso-font-alt:"\FF2D\FF33 \660E\671D";
+	mso-font-charset:128;
+	mso-generic-font-family:roman;
+	mso-font-format:other;
+	mso-font-pitch:fixed;
+	mso-font-signature:1 134676480 16 0 131072 0;}
+@font-face
+	{font-family:"\@MS Mincho";
+	panose-1:0 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:128;
+	mso-generic-font-family:roman;
+	mso-font-format:other;
+	mso-font-pitch:fixed;
+	mso-font-signature:1 134676480 16 0 131072 0;}
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal { mso-pagination: widow-orphan; font-size: 12.0pt; font-family: Times New Roman; 
+               mso-fareast-font-family: Times New Roman; margin-left: 0cm; 
+               margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt }
+p.MsoPlainText, li.MsoPlainText, div.MsoPlainText { mso-pagination: widow-orphan; font-size: 10.0pt; font-family: Courier New; 
+               mso-fareast-font-family: Times New Roman; margin-left: 0cm; 
+               margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt }
+@page Section1
+	{size:595.3pt 841.9pt;
+	margin:72.0pt 57.6pt 72.0pt 57.6pt;
+	mso-header-margin:35.4pt;
+	mso-footer-margin:35.4pt;
+	mso-paper-source:0;}
+div.Section1 { page: Section1 }
+-->
+</style>
+</head>
+
+<body lang="EN-GB" style="tab-interval:36.0pt">
+
+<div class="Section1">
+  <div style="border:none;border-bottom:solid windowtext .75pt;padding:0cm 0cm 1.0pt 0cm">
+    <p class="MsoPlainText" style="border:none;mso-border-bottom-alt:solid windowtext .75pt;
+padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm"><span style="mso-fareast-font-family:
+&quot;MS Mincho&quot;">Trojan Reversing part I - by defiler.<o:p></o:p></span></p>
+  </div>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Published
+  by Tsehp, sept 2000.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Our
+  target is Sub7.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">You
+  think, you protected the Sub7's server with a password, so no one else can<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">connect
+  to it ?<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">You're
+  dead wrong! In this essay i'll show you, how I found a 'security hole' inside<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">the
+  trojan's server.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Tools,
+  you'll need:<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">(x)
+  SoftICE (+ SymbolLoader.)<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">(x)
+  the target of course, Sub7, available on: subseven.slak.org<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">(x)
+  a basic knowledge of SoftICE's commands + assembly assembly language.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">The
+  "essay":<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">I
+  was interested in the comparison of the server-password with the one that the<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">client-user
+  entered after connecting. So I ran SoftICE's symbol loader to import<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">some
+  winsock exports ;)<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Run
+  the Loader, click on the "FILE|LOAD EXPORTS" menu, browse your
+  win/system path for<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">"wsock32.dll"
+  and open it. SymbolLoader should answer like this:<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">"Exports
+  for Z:\WINDBLOWZ\SYSTEM\Wsock32.dll loaded sucessfully"<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Now
+  go and configure a Sub7 server (read the documents, i won't explain how to do
+  this)<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">with
+  EditServer.exe. I took port number 666 and set the password to
+  "abuse".<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Run
+  the server, you can later on kill the process with ProcDump but better don't
+  be<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">online
+  (I am IN NO WAY responsible for any stuff you do with this program, it was<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">not
+  written by me).<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Connect
+  with SubSeven.exe to the server (take 127.0.0.1 as IP), the password dialog
+  will<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">pop
+  up, enter a dummy password.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">The
+  server uses WSOCK32!recv to retreive data sent from the client.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">The
+  Windows Sockets recv function receives data from a socket.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">int
+  recv (<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;
+  </span>SOCKET s,<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp; </span><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;
+  </span>char FAR* buf,<span style="mso-tab-count:
+1">&nbsp;&nbsp; </span><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;
+  </span>int len,<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;
+  </span>int flags<span style="mso-tab-count:1"> </span><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><span style="mso-spacerun: yes">&nbsp;&nbsp;
+  </span>);<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">The
+  second parametre (char FAR* buf) is the important one. There the data will be
+  stored.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Now
+  set a bpx on recv inside softice (bpx recv do "d esp-&gt;8").<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Click
+  OK to send the password to the client. SoftICE will pop up, press F11 (g
+  @ss:esp)<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">and
+  the password - preceeding a 'PWD' string - will be shown in SoftICE's data
+  window.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Now
+  set a bpr on the password's address (e.g.: bpr 405000 405010 RW) and on the
+  copy<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">it
+  will make at 004029c5.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Next
+  time you break in you should be at 004040dd:<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">0167:004040dd<span style="mso-spacerun: yes">&nbsp;
+  </span>8b0e<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>mov<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>ecx,[esi]<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">0167:004040df<span style="mso-spacerun: yes">&nbsp;
+  </span>8b1f<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>mov<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>ebx,[edi]<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">0167:004040e1<span style="mso-spacerun: yes">&nbsp;
+  </span>39d9<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>cmp<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>ecx,ebx<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span lang="FR" style="mso-fareast-font-family:&quot;MS Mincho&quot;;
+mso-ansi-language:FR">0167:004040e3<span style="mso-spacerun: yes">&nbsp; </span>7558<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>jnz<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>0040413d<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">0167:004040e5<span style="mso-spacerun: yes">&nbsp;
+  </span>4a<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>dec<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>edx<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span lang="FR" style="mso-fareast-font-family:&quot;MS Mincho&quot;;
+mso-ansi-language:FR">0167:004040e6<span style="mso-spacerun: yes">&nbsp; </span>7415<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>jz<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>004040fd<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">0167:004040e8<span style="mso-spacerun: yes">&nbsp;
+  </span>8b4e04<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>mov<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>ecx,[esi+04]<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">0167:004040eb<span style="mso-spacerun: yes">&nbsp;
+  </span>8b5f04<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>mov<span style="mso-spacerun: yes">&nbsp; </span><span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>ebx,[edi+04]<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">0167:004040ee<span style="mso-spacerun: yes">&nbsp;
+  </span>39d9<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>cmp<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>ecx,ebx<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">hmmm,
+  it broke in at line 4040dd, cause we set a bpr on our password. So it must be
+  located<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">inside
+  the buffer esi points to. The first 4 chars will be moved into ecx, another 4<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">chars
+  into ebx and will then be compared.. So now you think you found the comparison<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">between
+  the real password and the one you entered? ah, ah, no way. The author of Sub7
+  is<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">even
+  more stupid: type "d edi" in softice, and we'll see:<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">016F:012A3DD4
+  31 34 34 33 38 31 33 36-37 38 32 37 31 35 31 30<span style="mso-spacerun:
+yes">&nbsp; </span>1443813678271510<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">016F:012A3DE4
+  31 39 38 30 00 69 6F 00-28 00 00 00 22 00 00 00<span style="mso-spacerun:
+yes">&nbsp; </span>1980.io.(..."...<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">016F:012A3DF4
+  01 00 00 00 13 00 00 00-53 75 62 73 65 76 65 6E<span style="mso-spacerun:
+yes">&nbsp; </span>........Subseven<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">016F:012A3E04
+  5F 5F 5F 3C 20 70 69 63-6B 20 3E 00 10 3E 2A 01<span style="mso-spacerun:
+yes">&nbsp; </span>___&lt; pick &gt;..&gt;*.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">016F:012A3E14
+  10 3E 2A 01 38 00 00 00-53 75 62 73 65 76 65 6E<span style="mso-spacerun:
+yes">&nbsp; </span>.&gt;*.8...Subseven<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">strange,
+  that was not the password i set... i took "abuse" as password. So
+  let's<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">see
+  what it is by reconnecting and entering it... SubSeven.exe says: connected.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">errrm,
+  is there a little possibility, that the author of SubSeven did a hardcoded<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">masterpassword
+  ? heh, try it a few times with some other servers (on your own PC).<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">And
+  yes, it is a Masterpassword.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Well,
+  thats all for today, i just thought someone would be interested in this stuff.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">I
+  am in no way responsible for the stuff you'll do with this information.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">regards,<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">defiler<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Greetings
+  (no specific order):<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">ultraschall,
+  cardenal mendoza, kaparo, flwright, ratso, haldir, lightdruid, ganjaman,<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">telcofix,
+  whataduck, tornado, hutch, masta, notty, knotty, kwazy webbit, secret,
+  iczelion,<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">bisoux,
+  MisterE, mr nop, neural noise, lazarus, peegee, random, daze, the anti xryst,<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">acid
+  burn, azzyrian, decline, blind angel, keyboard junky, reverend x, DnNuke,
+  Gizmo,<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">viny,
+  volatility, alpine, promothee, sat0r, fli7e, targ0n, Ridlexx, novatrix,
+  TomTom,<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">WarezPup,
+  Weazel, visionz, kaai, MagicRaph, sepulcrum, MVD, sn00pee, amante, FatBoyJoe,<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">SantMat
+  and all who contribute to the reversing spirit ;)<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">Group/chan
+  greets:<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">all
+  blizzard members, everyone in #win32asm, #cracking, #eliteFravias,
+  #reversing4newbies,<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">#immortaldescendants,
+  #digital.factory, #hellforge, and #learn2crack.<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">I
+  would be pleased to get some feedback, catch me on irc or mail to:<o:p></o:p></span></p>
+  <p class="MsoPlainText"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;">defiler@eliteFravias.de<o:p></o:p></span></p>
+</div>
+
+
+
+
+</body></html>
